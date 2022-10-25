@@ -9,7 +9,12 @@
       <div class="conteudo">
         <h1>Nenhuma foto foi adicionada ainda!</h1>
       </div>
-      <ion-button color="danger" fill="outline" shape="round" @click="exibirTexto()">
+      <ion-button
+        color="danger"
+        fill="outline"
+        shape="round"
+        @click="exibirTexto()"
+      >
         <ion-icon :icon="add"></ion-icon>
       </ion-button>
     </ion-content>
@@ -24,20 +29,26 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
+  alertController,
 } from "@ionic/vue";
 import { add } from "ionicons/icons";
-
 
 export default defineComponent({
   name: "Tab1Page",
   components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
   setup() {
-    const exibirTexto = () => {
-      console.log("Teste de onclick")
-    }
+    const exibirTexto = async () => {
+      const alert = await alertController.create({
+        header: "Clique no botão",
+        subHeader: "",
+        message: "Você acabou de utilizar o alert do android ou iOS",
+        buttons: ["Entendido"],
+      });
+      await alert.present();
+    };
     return {
       add,
-      exibirTexto
+      exibirTexto,
     };
   },
   ionViewDidEnter() {
@@ -69,5 +80,4 @@ h1 {
 .conteudo {
   text-align: center;
 }
-
 </style>
