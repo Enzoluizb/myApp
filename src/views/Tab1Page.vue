@@ -9,30 +9,48 @@
       <div class="conteudo">
         <h1>Nenhuma foto foi adicionada ainda!</h1>
       </div>
-      
+      <ion-button color="danger" fill="outline" shape="round" @click="exibirTexto()">
+        <ion-icon :icon="add"></ion-icon>
+      </ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, onIonViewDidEnter } from '@ionic/vue';
+import { defineComponent } from "vue";
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+} from "@ionic/vue";
+import { add } from "ionicons/icons";
 
 
-export default  defineComponent({
-  name: 'Tab1Page',
-  components: {  IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
-  ionViewDidEnter (){
-    console.log('Entrou na página');
+export default defineComponent({
+  name: "Tab1Page",
+  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
+  setup() {
+    const exibirTexto = () => {
+      console.log("Teste de onclick")
+    }
+    return {
+      add,
+      exibirTexto
+    };
   },
-  ionViewDidLeave(){
-    console.log('Saiu da página');
+  ionViewDidEnter() {
+    console.log("Entrou na página");
+  },
+  ionViewDidLeave() {
+    console.log("Saiu da página");
   },
   ionViewWillEnter() {
-    console.log('Vai entrar na página');
+    console.log("Vai entrar na página");
   },
   ionViewWillLeave() {
-    console.log('Vai sair da página');
+    console.log("Vai sair da página");
   },
 });
 </script>
@@ -51,4 +69,5 @@ h1 {
 .conteudo {
   text-align: center;
 }
+
 </style>
