@@ -6,17 +6,11 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <div class="conteudo">
-        <h1>Nenhuma foto foi adicionada ainda!</h1>
-      </div>
-      <ion-button
-        color="danger"
-        fill="outline"
-        shape="round"
-        @click="exibirTexto()"
-      >
-        <ion-icon :icon="add"></ion-icon>
-      </ion-button>
+      <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+        <ion-fab-button @click="takePhoto()">
+          <ion-icon :icon="camera"/>
+        </ion-fab-button>
+      </ion-fab>
     </ion-content>
   </ion-page>
 </template>
@@ -29,55 +23,31 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  alertController,
+  IonFab,
+  IonIcon,
+  IonFabButton,
 } from "@ionic/vue";
-import { add } from "ionicons/icons";
+import { camera } from "ionicons/icons";
+import { userPhotoGallery } from "@/composable/userPhotoGallery"
 
 export default defineComponent({
   name: "Tab1Page",
-  components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
+  components: {
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonPage,
+    IonFab,
+    IonFabButton,
+    IonIcon,
+  },
   setup() {
-    const exibirTexto = async () => {
-      const alert = await alertController.create({
-        header: "Clique no botão",
-        subHeader: "",
-        message: "Você acabou de utilizar o alert do android ou iOS",
-        buttons: ["Entendido"],
-      });
-      await alert.present();
-    };
+    const {takePhoto} = userPhotoGallery();
     return {
-      add,
-      exibirTexto,
+      camera,
+      takePhoto
     };
-  },
-  ionViewDidEnter() {
-    console.log("Entrou na página");
-  },
-  ionViewDidLeave() {
-    console.log("Saiu da página");
-  },
-  ionViewWillEnter() {
-    console.log("Vai entrar na página");
-  },
-  ionViewWillLeave() {
-    console.log("Vai sair da página");
   },
 });
 </script>
-
-<style scoped="style">
-h1 {
-  color: rgb(255, 255, 255);
-  background-color: rgb(0, 0, 0);
-  font-family: sans-serif;
-  font-size: 15px;
-  padding: 5px;
-  border-radius: 15px;
-  margin: 40px 45px;
-  box-shadow: 0 0 40px rgb(43, 43, 43);
-}
-.conteudo {
-  text-align: center;
-}
-</style>
