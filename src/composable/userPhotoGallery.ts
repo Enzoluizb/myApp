@@ -5,18 +5,26 @@ import {
   CameraSource,
   Photo,
 } from "@capacitor/camera";
-import { Preferences } from "@capacitor/preferences";
-import { Filesystem, Directory } from "@capacitor/filesystem";
+//import { Preferences } from "@capacitor/preferences";
+//import { Filesystem, Directory } from "@capacitor/filesystem";
 
 export interface UserPhoto {
   filepath: string;
   webviewPath?: string;
 }
 
-
-
 export function userPhotoGallery() {
   const photos = ref<UserPhoto[]>([]);
+
+const convertBlobToBase64 = (blob: Blob) => 
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  })
 
   const takePhoto = async () => {
     const photo = await Camera.getPhoto({
