@@ -4,7 +4,6 @@ import {
   CameraResultType,
   CameraSource,
   Photo,
-  
 } from "@capacitor/camera";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Preferences } from "@capacitor/preferences";
@@ -66,8 +65,25 @@ export function userPhotoGallery() {
     photos.value = [savedFileImage, ...photos.value];
   };
 
-  watch(photos, cachePhotos);
+  const loadSaved = async () => {
+    const photoList = await Preferences.get({ key: PHOTO_STORAGE });
+    const photosInPreferences = photoList.value
+      ? JSON.parse(photoList.value)
+      : [];
 
+    for (const photo of photosInPreferences) {
+      const file = await Filesystem.readFile({
+        path: photo.filepath,
+        directory: Directory.Data,
+      });
+      photo.webviewPath = `data:image/jpeg;base64,${file.data}`;
+    }
+
+    photos.value = photosInPreferences;
+  };
+
+  watch(photos, cachePhotos);
+  onMounted(loadSaved);
   return {
     photos,
     takePhoto,
