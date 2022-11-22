@@ -7,6 +7,9 @@ import {
 } from "@capacitor/camera";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 import { Preferences } from "@capacitor/preferences";
+import { isPlatform } from "@ionic/vue";
+import { Capacitor } from "@capacitor/core";
+
 
 export interface UserPhoto {
   filepath: string;
@@ -38,19 +41,35 @@ export function userPhotoGallery() {
     photo: Photo,
     fileName: string
   ): Promise<UserPhoto> => {
-    // let base64Data: string;
-    const response = await fetch(photo.webPath!);
-    const blob = await response.blob();
-    const base64Data = (await convertBlobToBase64(blob)) as string;
+    let base64Data: string;
+    if (isPlatform("hybrid")) {
+      const file = await Filesystem.readFile({
+        path: photo.path!,
+      });
+      base64Data = file.data;
+    } else {
+      const response = await fetch(photo.webPath!);
+      const blob = await response.blob();
+      base64Data = (await convertBlobToBase64(blob)) as string;
+    }
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64Data,
       directory: Directory.Data,
     });
-    return {
-      filepath: fileName,
-      webviewPath: photo.webPath,
-    };
+    if (isPlatform("hybrid")) {
+      return {
+        filepath: savedFile.uri,
+
+        webviewPath: Capacitor.convertFileSrc(savedFile.uri),
+      };
+    } else {
+      return {
+        filepath: fileName,
+
+        webviewPath: photo.webPath,
+      };
+    }
   };
 
   const takePhoto = async () => {
@@ -71,16 +90,18 @@ export function userPhotoGallery() {
       ? JSON.parse(photoList.value)
       : [];
 
+    if(!isPlatform('hybrid')) {
     for (const photo of photosInPreferences) {
       const file = await Filesystem.readFile({
         path: photo.filepath,
         directory: Directory.Data,
       });
       photo.webviewPath = `data:image/jpeg;base64,${file.data}`;
-    }
+    }}
 
     photos.value = photosInPreferences;
   };
+
 
   watch(photos, cachePhotos);
   onMounted(loadSaved);
